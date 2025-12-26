@@ -11,19 +11,50 @@ struct ContentView: View {
     
     @StateObject private var viewModel = VinciBitViewModel()
     
+    @State private var showImagePicker = false
+    
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: viewModel.isModelLoaded ? "checkmark.seal.fill" : "hourglass")
-                .font(.system(size: 64))
-                .foregroundColor(viewModel.isModelLoaded ? .green : .orange)
+        VStack(spacing: 20) {
             
-            Text(viewModel.isModelLoaded
-                 ? "VinciBit Core ML Ready"
-                 : "Loading Core ML…")
-                .font(.title3)
-                .fontWeight(.medium)
+            Group{
+                if let image = viewModel.outputImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 300)
+                        .cornerRadius(12)
+                }else{
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.gray.opacity(0.1))
+                        .frame(height: 300)
+                        .overlay{
+                            Text("No Image")
+                                .foregroundStyle(.secondary)
+                        }
+                }
+            }
+            
+            VStack(spacing: 12){
+                Button{
+                    showImagePicker = true
+                }label: {
+                    Label("Pick Image", systemImage: "photo.on.rectangle")
+                }
+                .buttonStyle(.bordered)
+                
+                Button{
+                    viewModel.runInference()
+                }label:{
+                    Label("Run Inference", systemImage: "bolt.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.inputImage == nil )
+            }
         }
         .padding()
+        .sheet(isPresented: $showImagePicker){
+            ImagePicker(image: $viewModel.inputImage)
+        }
     }
 }
 
