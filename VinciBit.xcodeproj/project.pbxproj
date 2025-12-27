@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6282A6182EFDB1AA00591B5D /* VinciBit */ = {
+		6273C0982EFEB64A00AF84BD /* VinciBit */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = VinciBit;
 			sourceTree = "<group>";
@@ -32,7 +32,7 @@
 		6282A60D2EFDB1AA00591B5D = {
 			isa = PBXGroup;
 			children = (
-				6282A6182EFDB1AA00591B5D /* VinciBit */,
+				6273C0982EFEB64A00AF84BD /* VinciBit */,
 				6282A6172EFDB1AA00591B5D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				6282A6182EFDB1AA00591B5D /* VinciBit */,
+				6273C0982EFEB64A00AF84BD /* VinciBit */,
 			);
 			name = VinciBit;
 			packageProductDependencies = (

@@ -16,6 +16,10 @@ final class VinciBitViewModel: ObservableObject {
     @Published var isModelLoaded: Bool = false
     @Published var inputImage: UIImage?
     @Published var outputImage: UIImage?
+    @Published var pixelGrid: PixelGrid?
+    @Published var showGrid: Bool = false
+    
+    private let gridGenerator = PixelGridGenerator.shared
     
     private let mlservice = MLModelService.shared
     
@@ -55,14 +59,32 @@ final class VinciBitViewModel: ObservableObject {
             
             DispatchQueue.main.async {
                 self.outputImage = resized
+                self.pixelGrid = self.gridGenerator.generateGrid(
+                    from: resized,
+                    gridSize: 32
+                )
             }
             
         }catch{
             print("Inference Failed : \(error)")
         }
-        
-        
     }
+    
+//    func loadPixelGrid(){
+//        guard let url = Bundle.main.url(forResource: "pixel_grid", withExtension: ".json") else{
+//            print("pixel_grid.json NOT FOUND")
+//            return
+//        }
+//        
+//        do {
+//            let data = try Data(contentsOf: url)
+//            DispatchQueue.main.async{
+//               
+//            }
+//        }catch{
+//            print("PIXEL GRID LOADING FAILED: \(error)")
+//        }
+//    }
 }
 
 
