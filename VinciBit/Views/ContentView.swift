@@ -73,6 +73,23 @@ struct ContentView: View {
                     .padding(.top, 8)
 
             }
+            
+            if !viewModel.palette.isEmpty {
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(viewModel.palette) { p in
+                            VStack {
+                                Rectangle()
+                                    .fill(p.color)
+                                    .frame(width: 30, height: 30)
+                                    .cornerRadius(4)
+                                Text("\(p.count)")
+                                    .font(.caption2)
+                            }
+                        }
+                    }
+                }
+            }
         }
         .padding()
         .sheet(isPresented: $showImagePicker){

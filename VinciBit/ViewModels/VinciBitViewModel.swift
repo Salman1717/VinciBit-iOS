@@ -14,16 +14,21 @@ import CoreML
 final class VinciBitViewModel: ObservableObject {
     
     @Published var isModelLoaded: Bool = false
+    @Published var showGrid: Bool = false
+    
     @Published var inputImage: UIImage?
     @Published var outputImage: UIImage?
+    
     @Published var pixelGrid: PixelGrid?
-    @Published var showGrid: Bool = false
+    @Published var palette: [PaletteColor] = []
     
     private let gridGenerator = PixelGridGenerator.shared
     
     private let mlservice = MLModelService.shared
     
     private let preprocessor = ImagePreprocessor.shared
+    
+    private let paletteExtractor = PaletteExtractor.shared
     
     init() {
         loadModel()
@@ -59,10 +64,14 @@ final class VinciBitViewModel: ObservableObject {
             
             DispatchQueue.main.async {
                 self.outputImage = resized
-                self.pixelGrid = self.gridGenerator.generateGrid(
+                
+                let grid = self.gridGenerator.generateGrid(
                     from: resized,
                     gridSize: 32
                 )
+                self.pixelGrid = grid
+                
+                self.palette = self.paletteExtractor.extractPalette(from: grid)
             }
             
         }catch{
