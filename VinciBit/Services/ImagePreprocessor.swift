@@ -15,12 +15,35 @@ final class ImagePreprocessor{
     
     private init(){}
     
-    func resize(_ image: UIImage, to size: CGSize) -> UIImage{
-        let renderer = UIGraphicsImageRenderer(size: size)
+    func resizePreservingAspectRatio(
+        _ image: UIImage,
+        targetSize: CGSize = CGSize(width: 256, height: 256)
+    ) -> UIImage {
+        
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        
         return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: size))
+            let aspectWidth  = targetSize.width / image.size.width
+            let aspectHeight = targetSize.height / image.size.height
+            let aspectRatio = max(aspectWidth, aspectHeight)
+            
+            let scaledWidth  = image.size.width * aspectRatio
+            let scaledHeight = image.size.height * aspectRatio
+            
+            let x = (targetSize.width - scaledWidth) / 2
+            let y = (targetSize.height - scaledHeight) / 2
+            
+            image.draw(
+                in: CGRect(
+                    x: x,
+                    y: y,
+                    width: scaledWidth,
+                    height: scaledHeight
+                )
+            )
         }
     }
+    
     
     func toPixelBuffer(from image: UIImage, width:Int = 256, height:Int = 256) -> CVPixelBuffer? {
         let attrs = [

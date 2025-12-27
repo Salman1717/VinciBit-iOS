@@ -42,10 +42,7 @@ final class VinciBitViewModel: ObservableObject {
     func runInference(){
         guard let inputImage else { return }
         
-        let resized = preprocessor.resize(
-            inputImage,
-            to: CGSize(width: 256, height: 256)
-        )
+        let resized = preprocessor.resizePreservingAspectRatio(inputImage)
         
         guard let pixelBuffer = preprocessor.toPixelBuffer(from: resized) else {
             print("Failed to Create Pixel Buffer")
