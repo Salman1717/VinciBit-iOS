@@ -21,6 +21,9 @@ final class VinciBitViewModel: ObservableObject {
     
     @Published var pixelGrid: PixelGrid?
     @Published var palette: [PaletteColor] = []
+    @Published var gridSize: Int = 16
+    let supportedGridSizes = [8, 16, 24, 32, 48]
+
     
     private let gridGenerator = PixelGridGenerator.shared
     
@@ -64,7 +67,7 @@ final class VinciBitViewModel: ObservableObject {
                 
                 let grid = self.gridGenerator.generateGrid(
                     from: resized,
-                    gridSize: 32
+                    gridSize: self.gridSize
                 )
                 self.pixelGrid = grid
                 

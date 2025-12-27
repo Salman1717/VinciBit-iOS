@@ -71,6 +71,21 @@ struct ContentView: View {
                 
                 Toggle("Show Grid", isOn: $showGrid)
                     .padding(.top, 8)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Grid Size: \(viewModel.gridSize) × \(viewModel.gridSize)")
+                        .font(.subheadline)
+
+                    Slider(
+                        value: Binding(
+                            get: { Double(viewModel.gridSize) },
+                            set: { viewModel.gridSize = Int($0) }
+                        ),
+                        in: 8...48,
+                        step: 8
+                    )
+                }
+
 
             }
             
