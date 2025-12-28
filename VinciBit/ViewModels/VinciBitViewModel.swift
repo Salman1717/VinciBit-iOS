@@ -21,9 +21,13 @@ final class VinciBitViewModel: ObservableObject {
     
     @Published var pixelGrid: PixelGrid?
     @Published var palette: [PaletteColor] = []
+    @Published var regions: [DrawRegion] = []
     @Published var gridSize: Int = 16
+    @Published var instructions: [InstructionSteps] = []
+    @Published var currentStepIndex: Int = 0
+    @Published var drawMode: DrawMode = .byColor
+    
     let supportedGridSizes = [8, 16, 24, 32, 48]
-
     
     private let gridGenerator = PixelGridGenerator.shared
     
@@ -32,6 +36,10 @@ final class VinciBitViewModel: ObservableObject {
     private let preprocessor = ImagePreprocessor.shared
     
     private let paletteExtractor = PaletteExtractor.shared
+    
+    private let regiondetector = RegionDetector.shared
+    
+    private let instructionEngine = InstructionEngine.shared
     
     init() {
         loadModel()
@@ -71,7 +79,20 @@ final class VinciBitViewModel: ObservableObject {
                 )
                 self.pixelGrid = grid
                 
-                self.palette = self.paletteExtractor.extractPalette(from: grid)
+                let palette = self.paletteExtractor.extractPalette(from: grid)
+                self.palette  = palette
+                
+                let regions = self.regiondetector.detectRegions(from: grid)
+                self.regions = regions
+                
+                self.instructions = self.instructionEngine.generateInstructions(
+                    gridSize: self.gridSize,
+                    palette: palette,
+                    regions: regions,
+                    mode: self.drawMode
+                )
+                
+                self.currentStepIndex = 0
             }
             
         }catch{
@@ -79,21 +100,21 @@ final class VinciBitViewModel: ObservableObject {
         }
     }
     
-//    func loadPixelGrid(){
-//        guard let url = Bundle.main.url(forResource: "pixel_grid", withExtension: ".json") else{
-//            print("pixel_grid.json NOT FOUND")
-//            return
-//        }
-//        
-//        do {
-//            let data = try Data(contentsOf: url)
-//            DispatchQueue.main.async{
-//               
-//            }
-//        }catch{
-//            print("PIXEL GRID LOADING FAILED: \(error)")
-//        }
-//    }
+    //    func loadPixelGrid(){
+    //        guard let url = Bundle.main.url(forResource: "pixel_grid", withExtension: ".json") else{
+    //            print("pixel_grid.json NOT FOUND")
+    //            return
+    //        }
+    //
+    //        do {
+    //            let data = try Data(contentsOf: url)
+    //            DispatchQueue.main.async{
+    //
+    //            }
+    //        }catch{
+    //            print("PIXEL GRID LOADING FAILED: \(error)")
+    //        }
+    //    }
 }
 
 

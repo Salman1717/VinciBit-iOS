@@ -13,7 +13,7 @@ struct ContentView: View {
     
     @State private var showImagePicker = false
     @State private var showGrid = true
-
+    
     
     var body: some View {
         VStack(spacing: 20) {
@@ -27,7 +27,7 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(width: geo.size.width)
                                 .cornerRadius(12)
-
+                            
                             // 🔥 PIXEL GRID OVERLAY (Task 6.3)
                             if showGrid, let grid = viewModel.pixelGrid {
                                 PixelGridOverlay(
@@ -51,7 +51,47 @@ struct ContentView: View {
                         }
                 }
             }
-
+            
+            if !viewModel.instructions.isEmpty {
+                
+                let step = viewModel.instructions[viewModel.currentStepIndex]
+                
+                VStack(spacing: 10) {
+                    
+                    Text(step.title)
+                        .font(.headline)
+                    
+                    Text(step.description)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                    
+                    if let color = step.color {
+                        Rectangle()
+                            .fill(color)
+                            .frame(width: 44, height: 44)
+                            .cornerRadius(6)
+                    }
+                    
+                    HStack {
+                        Button("Previous") {
+                            viewModel.currentStepIndex =
+                            max(0, viewModel.currentStepIndex - 1)
+                        }
+                        
+                        Button("Next") {
+                            viewModel.currentStepIndex =
+                            min(
+                                viewModel.instructions.count - 1,
+                                viewModel.currentStepIndex + 1
+                            )
+                        }
+                    }
+                }
+                .padding(.top)
+            }
+            
+            
             
             VStack(spacing: 12){
                 Button{
@@ -75,7 +115,7 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Grid Size: \(viewModel.gridSize) × \(viewModel.gridSize)")
                         .font(.subheadline)
-
+                    
                     Slider(
                         value: Binding(
                             get: { Double(viewModel.gridSize) },
@@ -85,8 +125,8 @@ struct ContentView: View {
                         step: 8
                     )
                 }
-
-
+                
+                
             }
             
             if !viewModel.palette.isEmpty {
