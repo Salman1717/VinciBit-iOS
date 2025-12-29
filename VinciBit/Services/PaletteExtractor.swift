@@ -5,42 +5,31 @@
 //  Created by Salman Mhaskar on 27/12/25.
 //
 
-import Foundation
 import SwiftUI
+import UIKit
 
-final class PaletteExtractor{
-    
+final class PaletteExtractor {
+
     static let shared = PaletteExtractor()
-    
-    private init(){ }
-    
-    func extractPalette( from  grid: PixelGrid, tolerance: Int = 20 ) -> [PaletteColor] {
-        
-        var buckets: [(color: Color, rgb: (Int, Int, Int), count: Int) ] = []
-        
+    private init() {}
+
+    func extract(from grid: DisplayGrid, tolerance: Int = 24) -> [PaletteColor] {
+        var buckets: [(Color, Int)] = []
+
         for cell in grid.cells {
-            guard let rgb = cell.color.toRGB() else { continue }
-            
-            if let index = buckets.firstIndex(where: {
-                abs($0.rgb.0 - rgb.0) < tolerance &&
-                abs($0.rgb.1 - rgb.1) < tolerance &&
-                abs($0.rgb.2 - rgb.2) < tolerance
-            }){
-                buckets[index].count += 1
-            }else{
-                buckets.append((cell.color, rgb, 1))
+            if let idx = buckets.firstIndex(where: {
+                $0.0.isApproximatelyEqual(to: cell.color, tolerance: tolerance)
+            }) {
+                buckets[idx].1 += 1
+            } else {
+                buckets.append((cell.color, 1))
             }
         }
-        
+
         return buckets
+            .sorted { $0.1 > $1.1 }
             .enumerated()
-            .sorted { $0.element.count > $1.element.count }
-            .map{ index, bucket in
-                PaletteColor(
-                    id: index,
-                    color: bucket.color,
-                    count: bucket.count
-                )
-            }
+            .map { PaletteColor(id: $0.offset, color: $0.element.0, count: $0.element.1) }
     }
 }
+

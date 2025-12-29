@@ -9,86 +9,59 @@ import Foundation
 import SwiftUI
 
 final class RegionDetector {
-    
+
     static let shared = RegionDetector()
-    
     private init() {}
-    
-    func detectRegions( from grid: PixelGrid) -> [DrawRegion] {
-        
+
+    func detect(from grid: LogicalGrid) -> [DrawRegion] {
+
         let size = grid.gridSize
-        
-        /// Fast lookup (x, y) -> PixelCell
-        var cellMap: [String: PixelCell] = [:]
-        
-        for cell in grid.cells{
-            cellMap[ key(cell.x, cell.y)] = cell
-        }
-        
+        var map = Dictionary(uniqueKeysWithValues:
+            grid.cells.map { ("\($0.x)-\($0.y)", $0) }
+        )
+
         var visited = Set<String>()
         var regions: [DrawRegion] = []
-        var regionId = 0
-        
-        for cell in grid.cells{
-            
-            let startKey = key(cell.x, cell.y)
-            
-            if visited .contains(startKey) { continue }
-            
-            var queue: [PixelCell] = [cell]
-            var regionCells: [PixelCell] = []
-            
-            visited.insert(startKey)
-            
-            /// Flood Fill using Breadth-First Search (BFS)
-            while !queue.isEmpty{
-                
-                let current = queue.removeFirst()
+        var id = 0
+
+        for cell in grid.cells {
+            let key = "\(cell.x)-\(cell.y)"
+            if visited.contains(key) { continue }
+
+            var stack = [cell]
+            var regionCells: [LogicalCell] = []
+            visited.insert(key)
+
+            while let current = stack.popLast() {
                 regionCells.append(current)
-                
-                let neighbors = [
-                    (current.x + 1, current.y),
-                    (current.x - 1, current.y),
-                    (current.x, current.y + 1),
-                    (current.x, current.y - 1 )
-                ]
-                
-                for (nx, ny) in neighbors{
-                    
-                    guard nx >= 0, ny >= 0, nx < size, ny < size else{
-                        continue
-                    }
-                    
-                    let nKey = key(nx, ny)
-                    
-                    if visited.contains(nKey) { continue }
-                    
-                    guard let neighbor =  cellMap[nKey] else {continue}
-                    
-                    ///Same Color == Same Region
-                    if neighbor.color == cell.color{
-                        visited.insert(nKey)
-                        queue.append(neighbor)
+
+                for (nx, ny) in [
+                    (current.x+1,current.y),
+                    (current.x-1,current.y),
+                    (current.x,current.y+1),
+                    (current.x,current.y-1)
+                ] {
+                    let nk = "\(nx)-\(ny)"
+                    if let n = map[nk],
+                       !visited.contains(nk),
+                       n.colorID == current.colorID {
+                        visited.insert(nk)
+                        stack.append(n)
                     }
                 }
             }
-            
+
             regions.append(
                 DrawRegion(
-                    id: regionId,
-                    color: cell.color,
+                    id: id,
+                    colorID: cell.colorID,
                     cells: regionCells
                 )
             )
-            
-            regionId += 1
+            id += 1
         }
 
-        return regions.sorted { $0.cellCount > $1.cellCount }
-        
-    }
-    
-    private func key(_ x: Int, _ y: Int) -> String {
-        "\(x)-|\(y)"
+        return regions.sorted { $0.cells.count > $1.cells.count }
     }
 }
+

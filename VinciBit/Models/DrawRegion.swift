@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct DrawRegion: Identifiable{
+struct DrawRegion: Identifiable {
     let id: Int
-    let color: Color
-    let cells: [PixelCell]
-    
-    var cellCount: Int{
+    let colorID: Int
+    let cells: [LogicalCell]
+
+    var cellCount: Int {
         cells.count
     }
 }
+
+

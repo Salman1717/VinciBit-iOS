@@ -8,93 +8,89 @@
 import SwiftUI
 
 final class InstructionEngine {
-    
+
     static let shared = InstructionEngine()
-    
-    private init() { }
-    
+    private init() {}
+
     func generateInstructions(
         gridSize: Int,
         palette: [PaletteColor],
         regions: [DrawRegion],
         mode: DrawMode
-    ) -> [InstructionSteps]
-    {
-        
-        var steps: [InstructionSteps] = []
+    ) -> [InstructionStep] {
+
+        var steps: [InstructionStep] = []
         var id = 0
-        
-        var totalSquare = gridSize * gridSize
-        
-        //MARK: - Setup Step
+        let totalSquares = gridSize * gridSize
+
+        // MARK: - Setup Step
         steps.append(
-            InstructionSteps(
+            InstructionStep(
                 id: id,
                 type: .setup,
-                title: "Draw The Grid",
-                description: "Draw a \(gridSize) X \(gridSize) grid on paper with \(totalSquare) total squares",
+                title: "Draw the Grid",
+                description: "Draw a \(gridSize) × \(gridSize) grid on paper (\(totalSquares) squares).",
                 drawMode: nil,
-                region: nil,
-                color: nil
+                colorID: nil,
+                color: nil,
+                region: nil
             )
         )
-        
         id += 1
-        
-        //MARK: - Draw Step
-        
-        switch mode{
-            
-            ///MARK:  By Color
+
+        // MARK: - Draw Steps
+        switch mode {
+
         case .byColor:
             for (index, paletteColor) in palette.enumerated() {
                 steps.append(
-                    InstructionSteps(
+                    InstructionStep(
                         id: id,
                         type: .draw,
                         title: "Step \(index + 1)",
-                        description: "Fill all squares using this  color \(paletteColor.count) steps",
+                        description: "Fill all squares using this color (\(paletteColor.count) squares).",
                         drawMode: .byColor,
-                        region: nil,
-                        color: paletteColor.color
+                        colorID: paletteColor.id,   // 🔑 THIS is what matters
+                        color: paletteColor.color,  // UI only
+                        region: nil
                     )
                 )
                 id += 1
             }
-            
-            ///MARK:  By Region
+
         case .byRegion:
-            for (index, region) in regions.enumerated(){
+            for (index, region) in regions.enumerated() {
                 steps.append(
-                    InstructionSteps(
+                    InstructionStep(
                         id: id,
                         type: .draw,
                         title: "Step \(index + 1)",
-                        description: "Fill all squares in  this  region \(region.cellCount) steps",
+                        description: "Fill this region (\(region.cellCount) squares).",
                         drawMode: .byRegion,
-                        region: region,
-                        color: region.color
+                        colorID: region.colorID,         // ✅ logical id
+                        color: palette.first { $0.id == region.colorID }?.color,
+                        region: region
                     )
                 )
                 id += 1
             }
         }
-        
-        //MARK: - Finish Steps
-        
+
+        // MARK: - Finish Step
         steps.append(
-            InstructionSteps(
+            InstructionStep(
                 id: id,
                 type: .finish,
                 title: "Finish",
                 description: "Great job! Your pixel drawing is complete 🎉",
                 drawMode: nil,
-                region: nil,
-                color: nil
+                colorID: nil,
+                color: nil,
+                region: nil
             )
         )
-        
+
         return steps
     }
-    
 }
+

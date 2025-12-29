@@ -19,14 +19,16 @@ enum InstructionType{
     case finish
 }
 
-struct InstructionSteps: Identifiable{
+
+struct InstructionStep: Identifiable {
     let id: Int
     let type: InstructionType
     let title: String
     let description: String
-    
+
     let drawMode: DrawMode?
+    let colorID: Int?          // ✅ LOGICAL identity
+    let color: Color?          // ✅ UI swatch only
     let region: DrawRegion?
-    let color: Color?
-    
 }
+

@@ -8,14 +8,14 @@
 import Foundation
 import SwiftUI
 
-struct PixelGrid{
+struct LogicalGrid{
     let gridSize: Int
-    let cells : [PixelCell]
+    let cells : [LogicalCell]
 }
 
-struct PixelCell:  Identifiable{
+struct LogicalCell: Identifiable {
     let id = UUID()
     let x: Int
     let y: Int
-    let color: Color
+    var colorID: Int
 }

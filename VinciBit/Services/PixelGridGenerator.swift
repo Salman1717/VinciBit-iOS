@@ -13,10 +13,10 @@ final class PixelGridGenerator {
     static let shared = PixelGridGenerator()
     private init() {}
 
-    func generateGrid(from image: UIImage, gridSize: Int) -> PixelGrid {
+    func generateGrid(from image: UIImage, gridSize: Int) -> DisplayGrid {
 
         guard let cgImage = image.cgImage else {
-            return PixelGrid(gridSize: gridSize, cells: [])
+            return DisplayGrid(gridSize: gridSize, cells: [])
         }
 
         let width = cgImage.width
@@ -28,10 +28,10 @@ final class PixelGridGenerator {
         guard let dataProvider = cgImage.dataProvider,
               let pixelData = dataProvider.data,
               let data = CFDataGetBytePtr(pixelData) else {
-            return PixelGrid(gridSize: gridSize, cells: [])
+            return DisplayGrid(gridSize: gridSize, cells: [])
         }
 
-        var cells: [PixelCell] = []
+        var cells: [DisplayGridCell] = []
 
         for y in 0..<gridSize {
             for x in 0..<gridSize {
@@ -76,11 +76,11 @@ final class PixelGridGenerator {
                 )
 
                 cells.append(
-                    PixelCell(x: x, y: y, color: color)
+                    DisplayGridCell(x: x, y: y, color: color)
                 )
             }
         }
 
-        return PixelGrid(gridSize: gridSize, cells: cells)
+        return DisplayGrid(gridSize: gridSize, cells: cells)
     }
 }
