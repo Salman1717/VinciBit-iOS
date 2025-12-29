@@ -50,8 +50,8 @@ final class InstructionEngine {
                         title: "Step \(index + 1)",
                         description: "Fill all squares using this color (\(paletteColor.count) squares).",
                         drawMode: .byColor,
-                        colorID: paletteColor.id,   // 🔑 THIS is what matters
-                        color: paletteColor.color,  // UI only
+                        colorID: paletteColor.id,
+                        color: paletteColor.color,  
                         region: nil
                     )
                 )
@@ -67,10 +67,11 @@ final class InstructionEngine {
                         title: "Step \(index + 1)",
                         description: "Fill this region (\(region.cellCount) squares).",
                         drawMode: .byRegion,
-                        colorID: region.colorID,         // ✅ logical id
+                        colorID: region.colorID,
                         color: palette.first { $0.id == region.colorID }?.color,
                         region: region
                     )
+
                 )
                 id += 1
             }

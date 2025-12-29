@@ -52,6 +52,18 @@ struct ContentView: View {
 
         return step.colorID
     }
+    
+    private var activeRegionForCurrentStep: DrawRegion? {
+        guard !viewModel.instructions.isEmpty else { return nil }
+
+        let step = viewModel.instructions[viewModel.currentStepIndex]
+
+        guard step.type == .draw else { return nil }
+        guard step.drawMode == .byRegion else { return nil }
+
+        return step.region
+    }
+
 
 }
 
@@ -82,8 +94,10 @@ private extension ContentView {
                             PixelGridOverlay(
                                 displayGrid: displayGrid,
                                 logicalGrid: logicalGrid,
-                                activeColorID: activeColorIDForCurrentStep
+                                activeColorID: activeColorIDForCurrentStep,
+                                activeRegion: activeRegionForCurrentStep
                             )
+
                         }
                     }
                 }

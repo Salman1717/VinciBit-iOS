@@ -29,7 +29,7 @@ final class VinciBitViewModel: ObservableObject {
     @Published var gridSize: Int = 16
     @Published var instructions: [InstructionStep] = []
     @Published var currentStepIndex: Int = 0
-    @Published var drawMode: DrawMode = .byColor
+    @Published var drawMode: DrawMode = .byRegion
 
     let supportedGridSizes = [8, 16, 24, 32, 48]
 

@@ -11,14 +11,21 @@ struct PixelGridOverlay: View {
 
     let displayGrid: DisplayGrid
     let logicalGrid: LogicalGrid
-    let activeColorID: Int?   // nil = show all
 
-    private var logicalMap: [String: Int] {
+    let activeColorID: Int?
+    let activeRegion: DrawRegion?
+
+    private var logicalMap: [String: LogicalCell] {
         Dictionary(
             uniqueKeysWithValues: logicalGrid.cells.map {
-                ("\($0.x)-\($0.y)", $0.colorID)
+                ("\($0.x)-\($0.y)", $0)
             }
         )
+    }
+
+    private var activeRegionKeys: Set<String> {
+        guard let region = activeRegion else { return [] }
+        return Set(region.cells.map { "\($0.x)-\($0.y)" })
     }
 
     var body: some View {
@@ -40,13 +47,25 @@ struct PixelGridOverlay: View {
         }
     }
 
+    // MARK: - Fade Logic
     private func opacity(for cell: DisplayGridCell) -> Double {
-        guard let activeColorID else { return 1.0 }
 
         let key = "\(cell.x)-\(cell.y)"
-        let cellColorID = logicalMap[key]
 
-        return cellColorID == activeColorID ? 1.0 : 0.12
+        // 🔵 DRAW BY REGION
+        if let activeRegion {
+            return activeRegionKeys.contains(key) ? 1.0 : 0.12
+        }
+
+        // 🟡 DRAW BY COLOR
+        if let activeColorID,
+           let logicalCell = logicalMap[key] {
+            return logicalCell.colorID == activeColorID ? 1.0 : 0.02
+        }
+
+        // 🔘 DEFAULT
+        return 1.0
     }
 }
+
 
